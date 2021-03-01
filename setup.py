@@ -16,6 +16,7 @@ setup(
     python_requires='>=3.6, <4',
     install_requires=[
         'Flask==1.1.2',
+        'jsonschema==3.2.0',
     ],
     # use_scm_version=True,
     setup_requires=['setuptools_scm'],

@@ -8,11 +8,41 @@ from typing import Callable
 from pathlib import Path
 
 from flask import Flask, Response, request
+from jsonschema import validate
 
 app = Flask(__name__)
 LOG = logging.getLogger(__name__)
 DEFAULT_PORT = 5000
 
+CONFIG_SCHEMA = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "ConfigObject",
+    "type": "object",
+    "properties": {
+        "endpoints": {
+            "type": "object",
+            "patternProperties": {
+                "/.*": {
+                    "type": "object",
+                    "patternProperties": {
+                        ".*": {
+                            "type": "object",
+                            "properties": {
+                                "function": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": ["function"],
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "required": [
+        "endpoints"
+    ]
+}
 
 def get_config(path: str) -> dict:
     config_file = Path(path)
@@ -26,7 +56,12 @@ def get_config(path: str) -> dict:
         LOG.debug(f'"{config_file}" is not readable JSON')
         return None
 
-    # FIXME: check for keys we'll need
+    # Validate config schema
+    try:
+        validate(instance=config_data, schema=CONFIG_SCHEMA)
+    except:
+        LOG.debug(f'"{config_file}" is in a bad format')
+        config_data = None
     return config_data
 
 
