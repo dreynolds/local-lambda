@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import sys
+from typing import Callable
 from pathlib import Path
 
 from flask import Flask, Response, request
@@ -13,7 +14,7 @@ LOG = logging.getLogger(__name__)
 DEFAULT_PORT = 5000
 
 
-def get_config(path):
+def get_config(path: str) -> dict:
     config_file = Path(path)
     if not config_file.exists() or not config_file.is_file():
         LOG.debug(f'"{config_file}" does not exist')
@@ -29,7 +30,7 @@ def get_config(path):
     return config_data
 
 
-def get_function_from_string(function_path):
+def get_function_from_string(function_path: str) -> Callable:
     """
     Get the actual function from the module path string
     """
@@ -43,7 +44,7 @@ def get_function_from_string(function_path):
         return getattr(module, func_name, None)
 
 
-def request_to_event(request):
+def request_to_event(request) -> dict:
     """
     Convert Flask request to lambda API GW request
     """
@@ -73,7 +74,7 @@ def convert_response(resp):
     return response
 
 
-def default_method(config):
+def default_method(config: dict) -> Callable:
     """
     Method to use for calling lambda function cod
     """
@@ -88,7 +89,7 @@ def default_method(config):
     return inner_method
 
 
-def configure_logging(debug):
+def configure_logging(debug: str, format=None) -> None:
     # FIXME: formatter
     if debug:
         level = logging.DEBUG
@@ -98,7 +99,7 @@ def configure_logging(debug):
         level=level,
     )
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="LambdaLocal")
     parser.add_argument(
         '--port',
