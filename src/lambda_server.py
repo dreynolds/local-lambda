@@ -101,6 +101,7 @@ def configure_logging(debug: str, format=None) -> None:
         format=format,
     )
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="LambdaLocal")
     parser.add_argument(
