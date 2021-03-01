@@ -90,13 +90,15 @@ def default_method(config: dict) -> Callable:
 
 
 def configure_logging(debug: str, format=None) -> None:
-    # FIXME: formatter
+    if format is None:
+        format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     if debug:
         level = logging.DEBUG
     else:
         level = logging.INFO
     logging.basicConfig(
         level=level,
+        format=format,
     )
 
 def main() -> None:
