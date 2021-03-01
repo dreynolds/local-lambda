@@ -8,7 +8,7 @@ from typing import Callable
 from pathlib import Path
 
 from flask import Flask, Response, request
-from jsonschema import validate
+import jsonschema
 
 app = Flask(__name__)
 LOG = logging.getLogger(__name__)
@@ -44,6 +44,7 @@ CONFIG_SCHEMA = {
     ]
 }
 
+
 def get_config(path: str) -> dict:
     config_file = Path(path)
     if not config_file.exists() or not config_file.is_file():
@@ -56,10 +57,10 @@ def get_config(path: str) -> dict:
         LOG.debug(f'"{config_file}" is not readable JSON')
         return None
 
-    # Validate config schema
+    # Validate config schema
     try:
-        validate(instance=config_data, schema=CONFIG_SCHEMA)
-    except:
+        jsonschema.validate(instance=config_data, schema=CONFIG_SCHEMA)
+    except jsonschema.exceptions.ValidationError:
         LOG.debug(f'"{config_file}" is in a bad format')
         config_data = None
     return config_data
