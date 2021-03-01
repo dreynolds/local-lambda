@@ -120,13 +120,13 @@ def main() -> None:
     )
     parser.add_argument(
         '--debug',
-        dest="debug_log",
+        dest="debugging",
         action="store_true",
         help="debug logging?"
     )
     args = parser.parse_args()
 
-    configure_logging(args.debug_log)
+    configure_logging(args.debugging)
 
     config = get_config(args.config_path)
     if not config:
@@ -144,4 +144,7 @@ def main() -> None:
             default_method(method_config),
             **extra_config,
         )
-    app.run(port=args.flask_port)
+    app.run(
+        port=args.flask_port,
+        debug=args.debugging,
+    )
