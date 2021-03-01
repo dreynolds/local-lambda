@@ -62,15 +62,15 @@ def request_to_event(request) -> dict:
     return event
 
 
-def convert_response(resp):
+def convert_response(resp: dict):
     """
     Convert API GW style lambda response to Flask response
     """
     response = Response(
-        resp.get('body'),
+        resp.get('body', ''),
         status=resp.get('statusCode', 200),
     )
-    response.headers.update(resp.get('headers'))
+    response.headers.update(resp.get('headers', {}))
     return response
 
 
@@ -100,6 +100,7 @@ def configure_logging(debug: str, format=None) -> None:
         level=level,
         format=format,
     )
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="LambdaLocal")

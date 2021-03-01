@@ -13,7 +13,7 @@ setup(
     long_description_content_type='text/markdown',
     package_dir={'': 'src'},  # Optional
     packages=find_packages(where='src'),
-    python_requires='>=3.7, <4',
+    python_requires='>=3.6, <4',
     install_requires=[
         'Flask==1.1.2',
     ],
