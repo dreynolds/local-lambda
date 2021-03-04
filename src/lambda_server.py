@@ -10,39 +10,11 @@ from pathlib import Path
 from flask import Flask, Response, request
 import jsonschema
 
+from config_schema import CONFIG_SCHEMA
+
 app = Flask(__name__)
 LOG = logging.getLogger(__name__)
 DEFAULT_PORT = 5000
-
-CONFIG_SCHEMA = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "ConfigObject",
-    "type": "object",
-    "properties": {
-        "endpoints": {
-            "type": "object",
-            "patternProperties": {
-                "/.*": {
-                    "type": "object",
-                    "patternProperties": {
-                        ".*": {
-                            "type": "object",
-                            "properties": {
-                                "function": {
-                                    "type": "string"
-                                }
-                            },
-                            "required": ["function"],
-                        }
-                    }
-                }
-            }
-        }
-    },
-    "required": [
-        "endpoints"
-    ]
-}
 
 
 def get_config(path: str) -> dict:
