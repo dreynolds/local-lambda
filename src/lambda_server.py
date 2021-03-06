@@ -1,41 +1,17 @@
 import argparse
 import importlib
-import json
 import logging
 import os
 import sys
 from typing import Callable
-from pathlib import Path
 
 from flask import Flask, Response, request
-import jsonschema
 
-from config_schema import CONFIG_SCHEMA
+from config import UrlConfigFile
 
 app = Flask(__name__)
 LOG = logging.getLogger(__name__)
 DEFAULT_PORT = 5000
-
-
-def get_config(path: str) -> dict:
-    config_file = Path(path)
-    if not config_file.exists() or not config_file.is_file():
-        LOG.debug(f'"{config_file}" does not exist')
-        return None
-
-    try:
-        config_data = json.load(config_file.open())
-    except json.decoder.JSONDecodeError:
-        LOG.debug(f'"{config_file}" is not readable JSON')
-        return None
-
-    # Validate config schema
-    try:
-        jsonschema.validate(instance=config_data, schema=CONFIG_SCHEMA)
-    except jsonschema.exceptions.ValidationError:
-        LOG.debug(f'"{config_file}" is in a bad format')
-        config_data = None
-    return config_data
 
 
 def get_function_from_string(function_path: str) -> Callable:
@@ -137,7 +113,7 @@ def main() -> None:
 
     configure_logging(args.debugging)
 
-    config = get_config(args.config_path)
+    config = UrlConfigFile(file_name=args.config_path).get_config()
     if not config:
         sys.exit("Config file not found or unparseable")
 
