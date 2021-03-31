@@ -38,10 +38,15 @@ def request_to_event(request) -> dict:
         "path": request.path,
         "httpMethod": request.method,
         "isBase64Encoded": False,
-        "headers": {}
+        "headers": {},
+        "queryStringParameters": {},
     }
     for k, v in request.headers.items():
         event['headers'][k] = v
+
+    for k, v in request.args.items():
+        event['queryStringParameters'][k] = v[0]
+
     LOG.debug(event)
     return event
 
