@@ -1,7 +1,7 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, Union
+from typing import Union
 
 import jsonschema  # type: ignore
 
