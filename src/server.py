@@ -12,10 +12,11 @@ class LambdaHandler(BaseHTTPRequestHandler):
 
     def _call_method(self, path, method, qs, body, headers):
         function_path = server_methods.get(path, {}).get(method, {}).get('function', None)
-        func = get_function_from_string(function_path)
-        if func is not None:
-            event = request_to_event(path, method, qs, body, headers)
-            return func(event, {})
+        if function_path is not None:
+            func = get_function_from_string(function_path)
+            if func is not None:
+                event = request_to_event(path, method, qs, body, headers)
+                return func(event, {})
         return {
             'body': "Bad method",
             'statusCode': 405,
@@ -52,9 +53,16 @@ def run(address='localhost', port=5000):
     httpd.serve_forever()
 
 
+class AlreadyRegistered(Exception):
+    pass
+
+
 class MethodRegistry(OrderedDict):
 
     def register(self, url, method_map):
+        if url in self:
+            msg = "This URL is already registered"
+            raise AlreadyRegistered(msg)
         self[url] = method_map
         
 server_methods = MethodRegistry()

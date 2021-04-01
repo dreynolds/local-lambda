@@ -4,7 +4,7 @@ import os
 import sys
 
 from config import UrlConfigFile
-from server import run, server_methods
+from server import run, server_methods, AlreadyRegistered
 
 LOG = logging.getLogger(__name__)
 DEFAULT_PORT = 5000
@@ -55,6 +55,9 @@ def main() -> None:
         sys.exit("Config file not found or unparseable")
 
     for url, method_config in config.get('endpoints', {}).items():
-        server_methods.register(url, method_config)
+        try:
+            server_methods.register(url, method_config)
+        except AlreadyRegistered:
+            LOG.debug("%s already registered, ignoring", url)
 
     run(port=args.server_port)
