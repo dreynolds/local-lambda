@@ -19,21 +19,18 @@ def get_function_from_string(function_path: str) -> Callable:
         return getattr(module, func_name, None)
 
 
-def request_to_event(path, method, qs, body, headers) -> dict:
+def request_to_event(path: str, method: str, qs: dict, body: str, headers: dict) -> dict:
     """
     Convert Flask request to lambda API GW request
     """
     event = {
         'body': body,
         'resource': "/{proxy+}",
-        'path': "path",
+        'path': path,
         'httpMethod': method,
         'isBase64Encoded': False,
-        'headers': {},
+        'headers': headers,
         'queryStringParameters': qs,
     }
-    for k, v in headers.items():
-        event['headers'][k] = v
-
     LOG.debug(event)
     return event

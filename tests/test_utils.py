@@ -1,18 +1,19 @@
-from lambda_server import convert_response
+from utils import request_to_event
 
 
-def test_convert_response():
-    BODY = '{}'
-    STATUS_CODE = 201
-    HEADERS = {'x-test-header': 'abc123'}
-    api_gw_resp = {
-        'body': BODY,
-        'statusCode': STATUS_CODE,
-        'headers': HEADERS,
+def test_request_to_event():
+    path = "/"
+    method = "POST"
+    qs = {}
+    body = "BODY"
+    headers = {'Host': "example.org", "Connection": "keep-alive"}
+    event = request_to_event(path, method, qs, body, headers)
+    assert event == {
+        'body': body,
+        'resource': "/{proxy+}",
+        'path': path,
+        'httpMethod': method,
+        'isBase64Encoded': False,
+        'headers': headers,
+        'queryStringParameters': qs,
     }
-    resp = convert_response(api_gw_resp)
-
-    assert resp.status_code == STATUS_CODE
-    assert resp.data.decode('utf-8') == BODY
-    for k, v in HEADERS.items():
-        assert resp.headers[k] == v
