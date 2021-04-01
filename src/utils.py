@@ -23,7 +23,7 @@ def request_to_event(
     path: str, method: str, qs: dict, body: str, headers: dict
 ) -> dict:
     """
-    Convert Flask request to lambda API GW request
+    Convert HTTP request to lambda API GW request
     """
     event = {
         "body": body,
