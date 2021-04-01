@@ -1,4 +1,4 @@
-from typing import Callable, Any
+from typing import Any
 import importlib
 import logging
 
