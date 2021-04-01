@@ -47,6 +47,9 @@ class LambdaHandler(BaseHTTPRequestHandler):
     def do_HEAD(self):
         self._process("HEAD")
 
+    def do_OPTIONS(self):
+        self._process("OPTIONS")
+
 def run(address='localhost', port=5000):
     LOG.info("lambda_server starting up on %s:%s", address, port)
     httpd = HTTPServer((address, port), LambdaHandler)

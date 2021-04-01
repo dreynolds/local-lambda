@@ -56,7 +56,7 @@ def main() -> None:
 
     for url, method_config in config.get('endpoints', {}).items():
         try:
-            server_methods.register(url, method_config)
+            server_methods.register(url.upper(), method_config)
         except AlreadyRegistered:
             LOG.debug("%s already registered, ignoring", url)
 
