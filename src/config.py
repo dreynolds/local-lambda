@@ -10,10 +10,9 @@ LOG = logging.getLogger(__name__)
 
 
 class UrlConfigFile:
-
     def __init__(self, *args, **kwargs):
-        self.file_name = kwargs.pop('file_name')
-        self.schema = kwargs.pop('schema', CONFIG_SCHEMA)
+        self.file_name = kwargs.pop("file_name")
+        self.schema = kwargs.pop("schema", CONFIG_SCHEMA)
 
     def load_file(self, file_name: str):
         config_file = Path(file_name)
