@@ -15,14 +15,14 @@ class UrlConfigFile:
         self.file_name = kwargs.pop("file_name")
         self.schema = kwargs.pop("schema", CONFIG_SCHEMA)
 
-    def load_file(self, file_name: str) -> Any[Path, None]:
+    def load_file(self, file_name: str) -> Union[Path, None]:
         config_file = Path(file_name)
         if not config_file.exists() or not config_file.is_file():
             LOG.debug(f'"{self.file_name}" does not exist')
             return None
         return config_file
 
-    def validate_config(self, config_data: str) -> Any[str, None]:
+    def validate_config(self, config_data: str) -> Union[str, None]:
         # Validate config schema
         try:
             jsonschema.validate(instance=config_data, schema=CONFIG_SCHEMA)

@@ -1,11 +1,11 @@
-from typing import Any
+from typing import Union
 import importlib
 import logging
 
 LOG = logging.getLogger(__name__)
 
 
-def get_function_from_string(function_path: str) -> Any[str, None]:
+def get_function_from_string(function_path: str) -> Union[str, None]:
     """
     Get the actual function from the module path string
     """
