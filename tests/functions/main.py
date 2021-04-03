@@ -4,8 +4,8 @@ import json
 
 def debug_me(event, context):
     body = {
-        'AWS_DEFAULT_REGION': os.environ.get('AWS_DEFAULT_REGION', ''),
-        'AWS_ACCOUNT': os.environ.get('AWS_ACCOUNT', '')
+        "AWS_DEFAULT_REGION": os.environ.get("AWS_DEFAULT_REGION", ""),
+        "AWS_ACCOUNT": os.environ.get("AWS_ACCOUNT", ""),
     }
     return {
         "headers": {},

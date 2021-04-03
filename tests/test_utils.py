@@ -18,8 +18,8 @@ def test_request_to_event():
         "httpMethod": method,
         "isBase64Encoded": False,
         "headers": {
-            'Host': "example.org",
-            'Connection': "keep-alive",
+            "Host": "example.org",
+            "Connection": "keep-alive",
         },
         "queryStringParameters": qs,
     }

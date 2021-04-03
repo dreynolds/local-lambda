@@ -34,7 +34,7 @@ def request_to_event(
         "headers": {},
         "queryStringParameters": qs,
     }
-    for k, v in headers.get('_headers', []):
-        event['headers'][k] = v
+    for k, v in headers.get("_headers", []):
+        event["headers"][k] = v
     LOG.debug(event)
     return event

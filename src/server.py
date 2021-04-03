@@ -6,13 +6,12 @@ import os
 import subprocess
 from urllib.parse import urlparse, parse_qs
 
-from utils import get_function_from_string, request_to_event
+from utils import request_to_event
 
 LOG = logging.getLogger(__name__)
 
 
 class LambdaHandler(BaseHTTPRequestHandler):
-
     def _call_method(self, path, method, qs, body, headers):
         function_details = server_methods.get(path, {}).get(method, {})
         function_path = function_details.get("function", None)
@@ -24,7 +23,7 @@ class LambdaHandler(BaseHTTPRequestHandler):
         if function_path is not None:
             event = request_to_event(path, method, qs, body, headers)
             output = subprocess.check_output(
-                ['call_command.py', function_path, '--event', json.dumps(event)],
+                ["call_command.py", function_path, "--event", json.dumps(event)],
                 env=current_env,
             )
             output = json.loads(output)
