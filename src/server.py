@@ -43,6 +43,7 @@ class LambdaHandler(BaseHTTPRequestHandler):
                 LOG.debug("Command output: %s", output)
             return output
         return self._bad_method_response()
+
     def _process(self, method):
         url = urlparse(self.path)
         qs = parse_qs(url.query)
