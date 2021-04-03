@@ -11,19 +11,13 @@ CONFIG_SCHEMA = {
                     "patternProperties": {
                         ".*": {
                             "type": "object",
-                            "properties": {
-                                "function": {
-                                    "type": "string"
-                                }
-                            },
+                            "properties": {"function": {"type": "string"}},
                             "required": ["function"],
                         }
-                    }
+                    },
                 }
-            }
+            },
         }
     },
-    "required": [
-        "endpoints"
-    ]
+    "required": ["endpoints"],
 }
