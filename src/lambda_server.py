@@ -23,6 +23,15 @@ def configure_logging(debug: str, format=None) -> None:
     )
 
 
+def register_methods(config):
+    for url, method_config in config.get("endpoints", {}).items():
+        method_config = {k.upper(): v for k, v in method_config.items()}
+        try:
+            server_methods.register(url, method_config)
+        except AlreadyRegistered:
+            LOG.debug("%s already registered, ignoring", url)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="LambdaLocal")
     parser.add_argument(
@@ -51,10 +60,5 @@ def main() -> None:
     if not config:
         sys.exit("Config file not found or unparseable")
 
-    for url, method_config in config.get("endpoints", {}).items():
-        try:
-            server_methods.register(url.upper(), method_config)
-        except AlreadyRegistered:
-            LOG.debug("%s already registered, ignoring", url)
-
+    register_methods(config)
     run(port=args.server_port)
