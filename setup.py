@@ -20,4 +20,7 @@ setup(
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     scripts=['src/scripts/local_lambda'],
+    url="https://github.com/dreynolds/local-lambda",
+    author="David Reynolds",
+    author_email="david@reynoldsfamily.org.uk",
 )
