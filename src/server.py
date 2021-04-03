@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from http.server import HTTPServer, BaseHTTPRequestHandler
+from http import HTTPStatus
 import logging
 import json
 import os
@@ -16,7 +17,7 @@ class LambdaHandler(BaseHTTPRequestHandler):
     def _bad_method_response(self):
         return {
             "body": "Bad method",
-            "statusCode": 405,
+            "statusCode": HTTPStatus.METHOD_NOT_ALLOWED.value,
         }
 
     def _call_method(self, path, method, qs, body, headers):
