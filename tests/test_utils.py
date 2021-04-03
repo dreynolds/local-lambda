@@ -27,21 +27,13 @@ def test_register_methods():
     Methods should be upper cased for consistency
     """
     URL = "/"
-    METHOD_CONFIG = {
-        'post': {
-            'function': "thing"
-        },
-        'geT': {
-            'function': "thing"
-        }
-    }
+    METHOD_CONFIG = {"post": {"function": "thing"}, "geT": {"function": "thing"}}
 
-    config = {'endpoints': {URL: METHOD_CONFIG}}
+    config = {"endpoints": {URL: METHOD_CONFIG}}
 
-    with mock.patch('lambda_server.server_methods.register') as mock_register:
+    with mock.patch("lambda_server.server_methods.register") as mock_register:
         register_methods(config)
 
         mock_register.assert_called_once_with(
-            URL,
-            {k.upper(): v for k, v in METHOD_CONFIG.items()}
+            URL, {k.upper(): v for k, v in METHOD_CONFIG.items()}
         )
