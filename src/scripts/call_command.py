@@ -28,7 +28,13 @@ if __name__ == "__main__":
 
     func = get_function_from_string(args.command[0])
     if func:
-        event = json.loads(args.event)
-        context = json.loads(args.context)
+        try:
+            event = json.loads(args.event)
+        except json.JSONDecodeError:
+            event = {}
+        try:
+            context = json.loads(args.context)
+        except json.JSONDecodeError:
+            context = {}
         output = func(event, context)
         print(json.dumps(output))

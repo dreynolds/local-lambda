@@ -12,6 +12,13 @@ LOG = logging.getLogger(__name__)
 
 
 class LambdaHandler(BaseHTTPRequestHandler):
+
+    def _bad_method_response(self):
+        return {
+            "body": "Bad method",
+            "statusCode": 405,
+        }
+
     def _call_method(self, path, method, qs, body, headers):
         function_details = server_methods.get(path, {}).get(method, {})
         function_path = function_details.get("function", None)
@@ -26,14 +33,15 @@ class LambdaHandler(BaseHTTPRequestHandler):
                 ["call_command.py", function_path, "--event", json.dumps(event)],
                 env=current_env,
             )
-            output = json.loads(output)
-            LOG.debug("Command output: %s", output)
+            try:
+                output = json.loads(output)
+            except json.JSONDecodeError:
+                output = self._bad_method_response()
+                LOG.exception("Error decoding method output: %s", output)
+            else:
+                LOG.debug("Command output: %s", output)
             return output
-        return {
-            "body": "Bad method",
-            "statusCode": 405,
-        }
-
+        return self._bad_method_response()
     def _process(self, method):
         url = urlparse(self.path)
         qs = parse_qs(url.query)
