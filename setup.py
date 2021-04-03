@@ -19,5 +19,8 @@ setup(
     ],
     # use_scm_version=True,
     setup_requires=['setuptools_scm'],
-    scripts=['src/scripts/local_lambda'],
+    scripts=[
+        'src/scripts/local_lambda',
+        'src/scripts/call_command.py',
+    ],
 )

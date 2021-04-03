@@ -1,6 +1,9 @@
 from collections import OrderedDict
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import logging
+import json
+import os
+import subprocess
 from urllib.parse import urlparse, parse_qs
 
 from utils import get_function_from_string, request_to_event
@@ -9,15 +12,24 @@ LOG = logging.getLogger(__name__)
 
 
 class LambdaHandler(BaseHTTPRequestHandler):
+
     def _call_method(self, path, method, qs, body, headers):
-        function_path = (
-            server_methods.get(path, {}).get(method, {}).get("function", None)
-        )
+        function_details = server_methods.get(path, {}).get(method, {})
+        function_path = function_details.get("function", None)
+        function_env = function_details.get("env", {})
+        current_env = os.environ.copy()
+        current_env.update(function_env)
+        LOG.debug("Generated ENV: %s", current_env)
+
         if function_path is not None:
-            func = get_function_from_string(function_path)
-            if func is not None:
-                event = request_to_event(path, method, qs, body, headers)
-                return func(event, {})
+            event = request_to_event(path, method, qs, body, headers)
+            output = subprocess.check_output(
+                ['call_command.py', function_path, '--event', json.dumps(event)],
+                env=current_env,
+            )
+            output = json.loads(output)
+            LOG.debug("Command output: %s", output)
+            return output
         return {
             "body": "Bad method",
             "statusCode": 405,

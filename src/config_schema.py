@@ -11,7 +11,7 @@ CONFIG_SCHEMA = {
                     "patternProperties": {
                         ".*": {
                             "type": "object",
-                            "properties": {"function": {"type": "string"}},
+                            "properties": {"function": {"type": "string"}, "env": {"type": "object"}},
                             "required": ["function"],
                         }
                     },
