@@ -17,7 +17,7 @@ setup(
     install_requires=[
         'jsonschema==3.2.0',
     ],
-    # use_scm_version=True,
+    use_scm_version=True,
     setup_requires=['setuptools_scm'],
     scripts=['src/scripts/local_lambda'],
 )
