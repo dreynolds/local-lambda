@@ -1,11 +1,11 @@
-from collections import OrderedDict
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from http import HTTPStatus
-import logging
 import json
+import logging
 import os
 import subprocess
-from urllib.parse import urlparse, parse_qs
+from collections import OrderedDict
+from http import HTTPStatus
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import parse_qs, urlparse
 
 from utils import request_to_event
 
@@ -30,8 +30,10 @@ class LambdaHandler(BaseHTTPRequestHandler):
 
         if function_path is not None:
             event = request_to_event(path, method, qs, body, headers)
+            command = ["call_command.py", function_path, "--event", json.dumps(event)]
+            LOG.debug("Command %s", ' '.join(command))
             output = subprocess.check_output(
-                ["call_command.py", function_path, "--event", json.dumps(event)],
+                command,
                 env=current_env,
             )
             try:
@@ -44,14 +46,16 @@ class LambdaHandler(BaseHTTPRequestHandler):
             return output
         return self._bad_method_response()
 
-    def _process(self, method):
+    def _process(self, method, body=None):
+        if body is None:
+            body = ""
         url = urlparse(self.path)
         qs = parse_qs(url.query)
         response = self._call_method(
             url.path,
             method,
             qs,
-            "",
+            body,
             self.headers.__dict__,
         )
         self.send_response(response["statusCode"])
@@ -64,7 +68,9 @@ class LambdaHandler(BaseHTTPRequestHandler):
         self._process("GET")
 
     def do_POST(self):
-        self._process("POST")
+        content_length = int(self.headers.get('Content-Length', 0))
+        post_data = self.rfile.read(content_length)
+        self._process("POST", post_data.decode('utf8'))
 
     def do_HEAD(self):
         self._process("HEAD")
