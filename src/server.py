@@ -39,8 +39,8 @@ class LambdaHandler(BaseHTTPRequestHandler):
             try:
                 output = json.loads(output)
             except json.JSONDecodeError:
-                output = self._bad_method_response()
                 LOG.exception("Error decoding method output: %s", output)
+                output = self._bad_method_response()
             else:
                 LOG.debug("Command output: %s", output)
             return output
