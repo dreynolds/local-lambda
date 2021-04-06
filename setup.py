@@ -17,10 +17,13 @@ setup(
     install_requires=[
         "jsonschema==3.2.0",
     ],
-    # use_scm_version=True,
-    setup_requires=["setuptools_scm"],
+    use_scm_version=True,
+    setup_requires=['setuptools_scm'],
     scripts=[
         "src/scripts/local_lambda",
         "src/scripts/call_command.py",
     ],
+    url="https://github.com/dreynolds/local-lambda",
+    author="David Reynolds",
+    author_email="david@reynoldsfamily.org.uk",
 )
