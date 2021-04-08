@@ -4,7 +4,7 @@ import os
 import sys
 
 from config import UrlConfigFile
-from server import run, server_methods, AlreadyRegistered
+from server import AlreadyRegistered, run, server_methods
 
 LOG = logging.getLogger(__name__)
 DEFAULT_PORT = 5000
@@ -40,6 +40,7 @@ def main() -> None:
         action="store",
         help="The port to run the API on",
         default=os.environ.get("PORT", DEFAULT_PORT),
+        type=int,
     )
     parser.add_argument(
         "-c",
