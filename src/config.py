@@ -36,6 +36,7 @@ class UrlConfigFile:
         config_file = self.load_file(self.file_name)
         try:
             config_data = json.load(config_file.open())
+            LOG.debug(config_data)
         except json.decoder.JSONDecodeError:
             LOG.debug(f'"{self.file_name}" is not readable JSON')
             return None
