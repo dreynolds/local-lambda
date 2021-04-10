@@ -31,8 +31,10 @@ def request_to_event(
         "path": path,
         "httpMethod": method,
         "isBase64Encoded": False,
-        "headers": headers,
+        "headers": {},
         "queryStringParameters": qs,
     }
+    for k, v in headers.get("_headers", []):
+        event["headers"][k] = v
     LOG.debug(event)
     return event

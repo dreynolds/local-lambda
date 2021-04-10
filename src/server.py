@@ -1,36 +1,61 @@
-from collections import OrderedDict
-from http.server import HTTPServer, BaseHTTPRequestHandler
+import json
 import logging
-from urllib.parse import urlparse, parse_qs
+import os
+import subprocess
+from collections import OrderedDict
+from http import HTTPStatus
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import parse_qs, urlparse
 
-from utils import get_function_from_string, request_to_event
+from utils import request_to_event
 
 LOG = logging.getLogger(__name__)
 
 
 class LambdaHandler(BaseHTTPRequestHandler):
-    def _call_method(self, path, method, qs, body, headers):
-        function_path = (
-            server_methods.get(path, {}).get(method, {}).get("function", None)
-        )
-        if function_path is not None:
-            func = get_function_from_string(function_path)
-            if func is not None:
-                event = request_to_event(path, method, qs, body, headers)
-                return func(event, {})
+
+    def _bad_method_response(self):
         return {
             "body": "Bad method",
-            "statusCode": 405,
+            "statusCode": HTTPStatus.METHOD_NOT_ALLOWED.value,
         }
 
-    def _process(self, method):
+    def _call_method(self, path, method, qs, body, headers):
+        function_details = server_methods.get(path, {}).get(method, {})
+        function_path = function_details.get("function", None)
+        function_env = function_details.get("env", {})
+        current_env = os.environ.copy()
+        current_env.update(function_env)
+        LOG.debug("Generated ENV: %s", current_env)
+
+        if function_path is not None:
+            event = request_to_event(path, method, qs, body, headers)
+            command = ["call_command.py", function_path, "--event", json.dumps(event)]
+            LOG.debug("Command %s", ' '.join(command))
+            output = subprocess.check_output(
+                command,
+                env=current_env,
+            )
+            try:
+                output = json.loads(output)
+            except json.JSONDecodeError:
+                LOG.exception("Error decoding method output: %s", output)
+                output = self._bad_method_response()
+            else:
+                LOG.debug("Command output: %s", output)
+            return output
+        return self._bad_method_response()
+
+    def _process(self, method, body=None):
+        if body is None:
+            body = ""
         url = urlparse(self.path)
         qs = parse_qs(url.query)
         response = self._call_method(
             url.path,
             method,
             qs,
-            "",
+            body,
             self.headers.__dict__,
         )
         self.send_response(response["statusCode"])
@@ -43,7 +68,9 @@ class LambdaHandler(BaseHTTPRequestHandler):
         self._process("GET")
 
     def do_POST(self):
-        self._process("POST")
+        content_length = int(self.headers.get('Content-Length', 0))
+        post_data = self.rfile.read(content_length)
+        self._process("POST", post_data.decode('utf8'))
 
     def do_HEAD(self):
         self._process("HEAD")
